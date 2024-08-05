@@ -1,0 +1,9 @@
+{
+	"status": "string",
+	"message": "string",
+	"data": {
+		"name": "string",
+		"email": "string",
+		"additional": ["nullable", "object"]
+	}
+}

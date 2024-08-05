@@ -1,0 +1,32 @@
+{
+	"name": "young-pandas/data-filter",
+	"description": "This package helps to define rules in a json file to filter incoming or outgoing data. End to End encyption included in this package.",
+	"type": "library",
+	"license": "MIT",
+	"version": "1.0.0",
+	"authors": [
+		{
+			"name": "Young Pandas",
+			"email": "code@youngpandas.com"
+		}
+	],
+	"minimum-stability": "stable",
+	"prefer-stable": true,
+	"autoload": {
+		"psr-4": {
+			"YoungPandas\\DataFilter\\": "src/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"YoungPandas\\DataFilter\\Providers\\FilterServiceProvider"
+			]
+		}
+	},
+	"require": {
+		"php": "^8.2",
+		"illuminate/support": "^10 || ^11",
+		"predis/predis": "^2.2"
+	}
+}
