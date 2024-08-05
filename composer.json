@@ -28,5 +28,11 @@
 		"php": "^8.2",
 		"illuminate/support": "^10 || ^11",
 		"predis/predis": "^2.2"
-	}
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/young-pandas/data-filter"
+		}
+	]
 }
