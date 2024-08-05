@@ -1,6 +1,6 @@
 {
 	"name": "young-pandas/data-filter",
-	"description": "This package helps to define rules in a json file to filter incoming or outgoing data. End to End encyption included in this package.",
+	"description": "This package helps to define rules in a json file to filter incoming or outgoing data.",
 	"type": "library",
 	"license": "MIT",
 	"version": "1.0.0",
