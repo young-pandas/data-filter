@@ -122,6 +122,9 @@ class FilterServiceProvider extends ServiceProvider
                 }
             }
 
+            // Remove any extra blank lines between namespace and use statements
+            $content = preg_replace('/\n{2,}(use\s+)/', "\n$1", $content);
+
             // Add bind statement if it does not exist
             if (strpos($content, $bindStatement) === false) {
                 $content = preg_replace('/(public function register\(\): void\s*\{)/', "$1\n$bindStatement", $content, 1);
