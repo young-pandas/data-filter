@@ -95,13 +95,12 @@ class FilterServiceProvider extends ServiceProvider
             Log::error($e->getMessage());
         }
     }
-
     private function updateAppServiceProvider()
     {
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
         $useStatements = [
-            'use App\Helpers\DataFilter;',
             'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
+            'use App\Helpers\DataFilter;'
         ];
         $bindStatement = '        $this->app->bind(DataFilterContract::class, DataFilter::class);';
 
@@ -118,7 +117,8 @@ class FilterServiceProvider extends ServiceProvider
             // Add use statements if they do not exist
             foreach ($useStatements as $useStatement) {
                 if (strpos($content, $useStatement) === false) {
-                    $content = preg_replace('/<\?php\s+/', "<?php\n$useStatement\n", $content, 1);
+                    // Insert use statements after the namespace declaration
+                    $content = preg_replace('/(namespace\s+App\\\Providers;\s+)/', "$1\n$useStatement\n", $content, 1);
                 }
             }
 
