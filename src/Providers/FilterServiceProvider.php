@@ -132,12 +132,17 @@ class FilterServiceProvider extends ServiceProvider
             // Update the register method
             $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
                 $existingContent = trim($matches[2]);
-                if ($existingContent === '//') {
+                if (empty($existingContent)) {
                     return $matches[1] . "\n$bindComment\n$bindStatement\n    }\n";
                 } else {
                     return $matches[1] . "\n" . $existingContent . "\n\n$bindComment\n$bindStatement\n    }\n";
                 }
             }, $content);
+
+            // Ensure the boot method exists
+            if (!preg_match('/public function boot\(\): void\s*\{\s*\}/', $content)) {
+                $content = preg_replace('/(class\s+AppServiceProvider\s+extends\s+ServiceProvider\s*\{)/', "$1\n\n    /**\n     * Bootstrap any application services.\n     */\n    public function boot(): void\n    {\n        //\n    }\n", $content);
+            }
 
             $result = File::put($appServiceProviderPath, $content);
             if ($result === false) {
