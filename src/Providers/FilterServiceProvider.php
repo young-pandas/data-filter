@@ -99,10 +99,11 @@ class FilterServiceProvider extends ServiceProvider
     {
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
         $useStatements = [
+            'use App\Helpers\DataFilter;',
             'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
-            'use App\Helpers\DataFilter;'
         ];
         $bindStatement = '        $this->app->bind(DataFilterContract::class, DataFilter::class);';
+        $bindComment = '        // Bind DataFilterContract to DataFilter';
 
         try {
             if (!File::exists($appServiceProviderPath)) {
@@ -122,12 +123,13 @@ class FilterServiceProvider extends ServiceProvider
                 }
             }
 
-            // Remove any extra blank lines between namespace and use statements
-            $content = preg_replace('/\n{2,}(use\s+)/', "\n$1", $content);
+            // Ensure one line space after namespace and use statements
+            $content = preg_replace('/(namespace\s+App\\\Providers;\s+)(use\s+)/', "$1\n$2", $content);
+            $content = preg_replace('/(use\s+[^\n]+;\s+)(class\s+)/', "$1\n$2", $content);
 
             // Add bind statement if it does not exist
             if (strpos($content, $bindStatement) === false) {
-                $content = preg_replace('/(public function register\(\): void\s*\{)/', "$1\n$bindStatement", $content, 1);
+                $content = preg_replace('/(public function register\(\): void\s*\{)/', "$1\n$bindComment\n$bindStatement\n", $content, 1);
             }
 
             $result = File::put($appServiceProviderPath, $content);
