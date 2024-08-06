@@ -100,8 +100,8 @@ class FilterServiceProvider extends ServiceProvider
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
         $newUseStatements = [
             'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
-            'use App\Helpers\AppDataFilter;',
             'use YoungPandas\DataFilter\Helpers\DataFilter;',
+            'use App\Helpers\AppDataFilter;',
         ];
         $bindComment = '        // Bind DataFilterContract to AppDataFilter and inject the base DataFilter';
         $bindStatement = '        $this->app->bind(DataFilterContract::class, function ($app) {' . "\n" .
@@ -133,9 +133,7 @@ class FilterServiceProvider extends ServiceProvider
                 if (isset($lines[$insertIndex]) && trim($lines[$insertIndex]) !== '') {
                     $insertIndex += 1;
                 }
-                array_splice($lines, $insertIndex, 0, "");
-                array_splice($lines, $insertIndex + 1, 0, $newUseStatements);
-                array_splice($lines, $insertIndex + count($newUseStatements) + 1, 0, "");
+                array_splice($lines, $insertIndex, 0, $newUseStatements);
             }
 
             // Update the register method
@@ -145,7 +143,7 @@ class FilterServiceProvider extends ServiceProvider
                 if ($existingContent === '//') {
                     return $matches[1] . "\n$bindComment\n$bindStatement\n    }\n";
                 } else {
-                    return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n\n" . $existingContent . "\n    }\n";
+                    return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n" . $existingContent . "\n    }\n";
                 }
             }, $content);
 
@@ -158,6 +156,7 @@ class FilterServiceProvider extends ServiceProvider
             Log::error($e->getMessage());
         }
     }
+
 
     public function registerRules()
     {
