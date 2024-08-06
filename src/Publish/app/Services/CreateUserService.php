@@ -7,18 +7,29 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * This is an example service class that creates a new user.
- * With this class, you can keep your controllers clean and maintainable.
- * It filters data and performs other operations on the data as per rules defined in the json files.
- */
-class CreateUserService extends Service
-{
-    public function __construct()
-    {
-        parent::__construct();
-    }
+use YoungPandas\DataFilter\Facades\Filter;
 
+/**
+ * Summary of CreateUserService
+ * 
+ * This class provides methods to handle the request data, create a new user, and handle the response data. 
+ * 
+ * Use the Filter facade to filter the request and response data.
+ * 
+ * It's as simple as calling Filter::filterRequestData($data, $rulesFilePath) and Filter::filterResponseData($data, $rulesFilePath).
+ * 
+ * Available methods:
+ * - hadleDataArray(array $data): array
+ * - HandleDataObject(array $data): object
+ * - handleRequestData(Request $request): array
+ * - handleResponseData(User $newUser): object
+ * 
+ * Feel free to modify this class as needed.
+ * 
+ * Hope you enjoy using this package. If you have any questions or need help, please feel free to reach out to us at https://youngpandas.com/contact
+ */
+class CreateUserService
+{
     public function handleRequestData(Request $request): array
     {
         $validated = $request->validate([
@@ -27,7 +38,7 @@ class CreateUserService extends Service
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
-        $sanitized = $this->filterRequestData($validated, 'createUser.json');
+        $sanitized = Filter::filterRequestData($validated, 'createUser.json');
         $data = $sanitized ?? [];
         if (empty($data)) {
             throw new \RuntimeException('Failed to extract example data');
@@ -73,7 +84,7 @@ class CreateUserService extends Service
                 "email" => $newUser['email'],
             ],
         ];
-        if (!$this->filterResponseData($response, 'createUser.json')) {
+        if (!Filter::filterResponseData($response, 'createUser.json')) {
             throw new \RuntimeException('Failed to filter response data');
         }
         return (object) $response;

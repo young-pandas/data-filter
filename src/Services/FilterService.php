@@ -21,7 +21,7 @@ use YoungPandas\DataFilter\Contracts\DataFilterContract;
  * 
  * @method __construct(DataFilterContract $dataFilter)
  * @method filterDataArray(array $data, string $rulesFilePath): array
- * @method filterDataObject(array $data, string $rulesFilePath): object
+ * @method filterDataObject(object $data, string $rulesFilePath): object
  * @method filterRequestData(array $data, string $rulesFilePath): array
  * @method filterResponseData(array $data, string $rulesFilePath): object
  */
@@ -42,6 +42,7 @@ class FilterService implements ServiceContract
      * 
      * @param array $data Pass the data to be filtered.
      * @param string $rulesFilePath Pass the rules file path to be used for filtering.
+     * @param string $methodPrefix This an option to add your custom prefix for your filtering methods.
      * @return array Return the filtered data as an array.
      */
     public function filterDataArray(array $data, string $rulesFilePath, string $methodPrefix = 'filter'): array
@@ -68,11 +69,12 @@ class FilterService implements ServiceContract
      * This method filters the data using the rules file provided.
      * It validates and sanitizes the data based on the rules.
      * 
-     * @param array $data Pass the data to be filtered.
+     * @param object $data Pass the data to be filtered.
      * @param string $rulesFilePath Pass the rules file path to be used for filtering.
+     * @param string $methodPrefix This an option to add your custom prefix for your filtering methods.
      * @return object Return the filtered data as an object.
      */
-    public function filterDataObject(array $data, string $rulesFilePath, string $methodPrefix = 'filter'): object
+    public function filterDataObject(object $data, string $rulesFilePath, string $methodPrefix = 'filter'): object
     {
         try {
             if (empty($data) || empty($rulesFilePath)) {
@@ -82,6 +84,8 @@ class FilterService implements ServiceContract
             $rulesFolderPath = Config::string('data-filter.rulesFolderPath');
             // Ensure there is a proper directory separator between the folder path and file path
             $fullPath = rtrim($rulesFolderPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($rulesFilePath, DIRECTORY_SEPARATOR);
+
+            $data = (array) $data;
 
             if (empty($sanitizedData = $this->rulesService->applyRules($data, $fullPath, $methodPrefix))) {
                 throw new \RuntimeException("Data sanitization failed");
@@ -98,7 +102,7 @@ class FilterService implements ServiceContract
      * 
      * @param array $data Pass the request data to be filtered.
      * @param string $rulesFilePath Pass the rules file path to be used for filtering.
-     * @param string $methodPrefix Pass the method prefix to be used for filtering.
+     * @param string $methodPrefix This an option to add your custom prefix for your filtering methods.
      * @return array Return the filtered request data as an array.
      */
     public function filterRequestData(array $data, string $rulesFilePath, string $methodPrefix = 'filter'): array
@@ -114,6 +118,7 @@ class FilterService implements ServiceContract
             }
             // Ensure there is a proper directory separator between the folder path and file path
             $fullPath = rtrim($requestsFolderPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($rulesFilePath, DIRECTORY_SEPARATOR);
+
             if (empty($sanitizedData = $this->rulesService->applyRules($data, $fullPath, $methodPrefix))) {
                 throw new \RuntimeException("Data sanitization failed");
             }
@@ -129,7 +134,7 @@ class FilterService implements ServiceContract
      * 
      * @param array $data Pass the response data to be filtered.
      * @param string $rulesFilePath Pass the rules file path to be used for filtering.
-     * @param string $methodPrefix Pass the method prefix to be used for filtering.
+     * @param string $methodPrefix This an option to add your custom prefix for your filtering methods.
      * @return object Return the filtered response data as an object.
      */
     public function filterResponseData(array $data, string $rulesFilePath, string $methodPrefix = 'filter'): object
@@ -138,9 +143,7 @@ class FilterService implements ServiceContract
             if (empty($data) || empty($rulesFilePath)) {
                 throw new \RuntimeException("Data or rules file path is empty");
             }
-            // Load the responses folder path from the configuration file
             $responsesFolderPath = Config::string('data-filter.responsesFolderPath');
-            // Ensure there is a proper directory separator between the folder path and file path
             $fullPath = rtrim($responsesFolderPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim($rulesFilePath, DIRECTORY_SEPARATOR);
 
             if (empty($sanitizedData = $this->rulesService->applyRules($data, $fullPath, $methodPrefix))) {

@@ -10,7 +10,7 @@ interface ServiceContract
 {
     public function filterDataArray(array $data, string $rulesFilePath): array;
 
-    public function filterDataObject(array $data, string $rulesFilePath): object;
+    public function filterDataObject(object $data, string $rulesFilePath): object;
 
     public function filterRequestData(array $data, string $rulesFilePath): array;
 

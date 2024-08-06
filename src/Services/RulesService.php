@@ -14,18 +14,18 @@ use YoungPandas\DataFilter\Contracts\DataFilterContract;
  */
 class RulesService implements RulesContract
 {
-    private DataFilterContract $handleData;
+    private DataFilterContract $dataFilter;
     private static array $rulesCache = [];
 
-    private function __construct(DataFilterContract $handleData)
+    private function __construct(DataFilterContract $dataFilter)
     {
-        $this->handleData = $handleData;
+        $this->dataFilter = $dataFilter;
     }
 
     // Factory method to create an instance of RulesService
-    public static function create(DataFilterContract $handleData): self
+    public static function create(DataFilterContract $dataFilter): self
     {
-        return new self($handleData);
+        return new self($dataFilter);
     }
 
     /**
@@ -198,10 +198,10 @@ class RulesService implements RulesContract
         }
         $methodName = strtolower($prefix) . ucfirst($rule) . ucfirst($suffix);
 
-        if (!method_exists($this->handleData, $methodName)) {
+        if (!method_exists($this->dataFilter, $methodName)) {
             throw new \RuntimeException("RulesService::applyRule: Method $methodName does not exist in DataFilter");
         }
 
-        return $this->handleData->$methodName($value);
+        return $this->dataFilter->$methodName($value);
     }
 }
