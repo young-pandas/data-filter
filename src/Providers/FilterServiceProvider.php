@@ -99,9 +99,9 @@ class FilterServiceProvider extends ServiceProvider
     {
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
         $newUseStatements = [
-            'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
-            'use YoungPandas\DataFilter\Helpers\DataFilter;',
             'use App\Helpers\AppDataFilter;',
+            'use YoungPandas\DataFilter\Helpers\DataFilter;',
+            'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
         ];
         $bindComment = '// Bind DataFilterContract to AppDataFilter and inject the base DataFilter';
         $bindStatement = '        $this->app->bind(DataFilterContract::class, function ($app) {' . "\n" .
@@ -145,6 +145,9 @@ class FilterServiceProvider extends ServiceProvider
                     return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n" . $existingContent . "\n    }";
                 }
             }, $content);
+
+            // Remove extra space within register function after the opening brace
+            $content = preg_replace('/public function register\(\): void\s*\{\s*\n\s*\n/', 'public function register(): void\n    {', $content);
 
             if (File::put($appServiceProviderPath, $content) === false) {
                 throw new \Exception("Failed to update AppServiceProvider file: $appServiceProviderPath");
