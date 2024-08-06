@@ -33,7 +33,7 @@ class FilterServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../Publish/config/data-filter.php' => \App::configPath('data-filter.php'),
             __DIR__ . '/../Publish/app/Http/Controllers/CreateUserController.php' => \App::path('Http/Controllers/CreateUserController.php'),
-            __DIR__ . '/../Publish/app/Helpers/DataFilter.php' => \App::path('Helpers/DataFilter.php'),
+            __DIR__ . '/../Publish/app/Helpers/AppDataFilter.php' => \App::path('Helpers/AppDataFilter.php'),
             __DIR__ . '/../Publish/json/Rules/Requests/createUser.json' => \App::basePath('json/Rules/Requests/createUser.json'),
             __DIR__ . '/../Publish/json/Rules/Responses/createUser.json' => \App::basePath('json/Rules/Responses/createUser.json'),
             __DIR__ . '/../Publish/app/Services/CreateUserService.php' => \App::path('Services/CreateUserService.php'),
