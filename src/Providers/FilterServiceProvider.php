@@ -142,13 +142,7 @@ class FilterServiceProvider extends ServiceProvider
                 if ($existingContent === '//') {
                     return $matches[1] . "\n    $bindComment\n    $bindStatement\n    }";
                 } else {
-                    $existingLines = explode("\n", $existingContent);
-                    $existingLines = array_map('trim', $existingLines);
-                    $existingLines = array_filter($existingLines, function ($line) {
-                        return !empty($line);
-                    });
-                    $existingContent = implode("\n    ", $existingLines);
-                    return $matches[1] . "\n    $bindComment\n    $bindStatement\n    " . $existingContent . "\n    }";
+                    return $matches[1] . "\n    " . $existingContent . "\n\n    $bindComment\n    $bindStatement\n    }";
                 }
             }, $content);
 
