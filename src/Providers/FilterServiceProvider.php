@@ -36,7 +36,6 @@ class FilterServiceProvider extends ServiceProvider
             __DIR__ . '/../Publish/app/Helpers/DataFilter.php' => \App::path('Helpers/DataFilter.php'),
             __DIR__ . '/../Publish/json/Rules/Requests/createUser.json' => \App::basePath('json/Rules/Requests/createUser.json'),
             __DIR__ . '/../Publish/json/Rules/Responses/createUser.json' => \App::basePath('json/Rules/Responses/createUser.json'),
-            __DIR__ . '/../Publish/app/Services/Service.php' => \App::path('Services/Service.php'),
             __DIR__ . '/../Publish/app/Services/CreateUserService.php' => \App::path('Services/CreateUserService.php'),
             __DIR__ . '/../Publish/resources/views/create-user.blade.php' => \App::resourcePath('views/create-user.blade.php'),
         ], 'data-filter');
@@ -95,6 +94,7 @@ class FilterServiceProvider extends ServiceProvider
             Log::error($e->getMessage());
         }
     }
+
     private function updateAppServiceProvider()
     {
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
@@ -124,7 +124,7 @@ class FilterServiceProvider extends ServiceProvider
 
             // Add bind statement if it does not exist
             if (strpos($content, $bindStatement) === false) {
-                $content = preg_replace('/(public function register\(\)\s*\{)/', "$1\n$bindStatement", $content, 1);
+                $content = preg_replace('/(public function register\(\): void\s*\{)/', "$1\n$bindStatement", $content, 1);
             }
 
             $result = File::put($appServiceProviderPath, $content);
