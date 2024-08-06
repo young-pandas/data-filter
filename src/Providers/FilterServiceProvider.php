@@ -100,10 +100,13 @@ class FilterServiceProvider extends ServiceProvider
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
         $useStatements = [
             'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
-            'use App\Helpers\DataFilter;',
+            'use App\Helpers\AppDataFilter;',
+            'use YoungPandas\DataFilter\Helpers\DataFilter;',
         ];
-        $bindStatement = '        $this->app->bind(DataFilterContract::class, DataFilter::class);';
-        $bindComment = '        // Bind DataFilterContract to DataFilter';
+        $bindComment = '        // Bind DataFilterContract to AppDataFilter and inject the base DataFilter';
+        $bindStatement = '        $this->app->bind(DataFilterContract::class, function ($app) {' . "\n" .
+            '            return new AppDataFilter($app->make(DataFilter::class));' . "\n" .
+            '        });';
 
         try {
             if (!File::exists($appServiceProviderPath)) {
@@ -115,18 +118,14 @@ class FilterServiceProvider extends ServiceProvider
                 throw new \Exception("Failed to get content from AppServiceProvider file: $appServiceProviderPath");
             }
 
-            // Ensure one line space after namespace
-            $content = preg_replace('/(namespace\s+App\\\Providers;\s*)(\n\s*\n)+/', "$1\n", $content);
-
             // Add use statements if they do not exist
             foreach ($useStatements as $useStatement) {
                 if (strpos($content, $useStatement) === false) {
-                    // Insert use statements after the namespace declaration
                     $content = preg_replace('/(namespace\s+App\\\Providers;\s+)/', "$1\n$useStatement\n", $content, 1);
                 }
             }
 
-            // Ensure one line space after the newly added use statements
+            // Ensure single line space after use statements
             $content = preg_replace('/(use\s+[^\n]+;\s*)(\n\s*\n)+/', "$1\n", $content);
 
             // Update the register method
@@ -144,8 +143,7 @@ class FilterServiceProvider extends ServiceProvider
                 $content = preg_replace('/(class\s+AppServiceProvider\s+extends\s+ServiceProvider\s*\{)/', "$1\n\n    /**\n     * Bootstrap any application services.\n     */\n    public function boot(): void\n    {\n        //\n    }\n", $content);
             }
 
-            $result = File::put($appServiceProviderPath, $content);
-            if ($result === false) {
+            if (File::put($appServiceProviderPath, $content) === false) {
                 throw new \Exception("Failed to update AppServiceProvider file: $appServiceProviderPath");
             } else {
                 Log::info("Successfully updated AppServiceProvider file: $appServiceProviderPath");
