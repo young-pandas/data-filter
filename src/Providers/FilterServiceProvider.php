@@ -135,7 +135,7 @@ class FilterServiceProvider extends ServiceProvider
                 if ($existingContent === '//') {
                     return $matches[1] . "\n$bindComment\n$bindStatement\n    }\n";
                 } else {
-                    return $matches[1] . "\n$bindComment\n$bindStatement\n\n" . $existingContent . "\n    }\n";
+                    return $matches[1] . "\n" . $existingContent . "\n\n$bindComment\n$bindStatement\n    }\n";
                 }
             }, $content);
 
