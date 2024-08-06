@@ -98,7 +98,7 @@ class FilterServiceProvider extends ServiceProvider
     private function updateAppServiceProvider()
     {
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
-        $useStatements = [
+        $newUseStatements = [
             'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
             'use App\Helpers\AppDataFilter;',
             'use YoungPandas\DataFilter\Helpers\DataFilter;',
@@ -118,30 +118,36 @@ class FilterServiceProvider extends ServiceProvider
                 throw new \Exception("Failed to get content from AppServiceProvider file: $appServiceProviderPath");
             }
 
-            // Add use statements if they do not exist
-            foreach ($useStatements as $useStatement) {
-                if (strpos($content, $useStatement) === false) {
-                    $content = preg_replace('/(namespace\s+App\\\Providers;\s+)/', "$1\n$useStatement\n", $content, 1);
+            // Add use statements
+            $lines = explode("\n", $content);
+            $namespaceLineIndex = -1;
+            foreach ($lines as $index => $line) {
+                if (strpos($line, 'namespace App\Providers;') !== false) {
+                    $namespaceLineIndex = $index;
+                    break;
                 }
             }
 
-            // Ensure single line space after use statements
-            $content = preg_replace('/(use\s+[^\n]+;\s*)(\n\s*\n)+/', "$1\n", $content);
+            if ($namespaceLineIndex !== -1) {
+                $insertIndex = $namespaceLineIndex + 1;
+                if (isset($lines[$insertIndex]) && trim($lines[$insertIndex]) !== '') {
+                    $insertIndex += 1;
+                }
+                array_splice($lines, $insertIndex, 0, "");
+                array_splice($lines, $insertIndex + 1, 0, $newUseStatements);
+                array_splice($lines, $insertIndex + count($newUseStatements) + 1, 0, "");
+            }
 
             // Update the register method
+            $content = implode("\n", $lines);
             $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
                 $existingContent = trim($matches[2]);
-                if (empty($existingContent)) {
+                if ($existingContent === '//') {
                     return $matches[1] . "\n$bindComment\n$bindStatement\n    }\n";
                 } else {
-                    return $matches[1] . "\n" . $existingContent . "\n\n$bindComment\n$bindStatement\n    }\n";
+                    return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n\n" . $existingContent . "\n    }\n";
                 }
             }, $content);
-
-            // Ensure the boot method exists
-            if (!preg_match('/public function boot\(\): void\s*\{\s*\}/', $content)) {
-                $content = preg_replace('/(class\s+AppServiceProvider\s+extends\s+ServiceProvider\s*\{)/', "$1\n\n    /**\n     * Bootstrap any application services.\n     */\n    public function boot(): void\n    {\n        //\n    }\n", $content);
-            }
 
             if (File::put($appServiceProviderPath, $content) === false) {
                 throw new \Exception("Failed to update AppServiceProvider file: $appServiceProviderPath");
