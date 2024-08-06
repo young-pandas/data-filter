@@ -25,7 +25,7 @@ use YoungPandas\DataFilter\Contracts\DataFilterContract;
  * @method filterRequestData(array $data, string $rulesFilePath): array
  * @method filterResponseData(array $data, string $rulesFilePath): object
  */
-abstract class FilterService implements ServiceContract
+class FilterService implements ServiceContract
 {
     protected RulesContract $rulesService;
     protected DataFilterContract $dataFilter;

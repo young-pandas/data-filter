@@ -5,13 +5,13 @@ namespace YoungPandas\DataFilter\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class Rules
+ * Class Service
  * @package YoungPandas\DataFilter\Facades
  */
-class Rules extends Facade
+class Filter extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'rules';
+        return 'filter';
     }
 }

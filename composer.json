@@ -21,7 +21,10 @@
 		"laravel": {
 			"providers": [
 				"YoungPandas\\DataFilter\\Providers\\FilterServiceProvider"
-			]
+			],
+			"aliases": {
+				"Filter": "YoungPandas\\DataFilter\\Facades\\Filter"
+			}
 		}
 	},
 	"require": {

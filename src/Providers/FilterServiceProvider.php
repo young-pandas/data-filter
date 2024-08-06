@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use YoungPandas\DataFilter\Services\FilterService;
 
 /**
  * Class FilterServiceProvider
@@ -23,6 +24,7 @@ class FilterServiceProvider extends ServiceProvider
         $this->registerRules();
         $this->registerHelpers();
         $this->registerServices();
+        $this->registerFacades();
     }
 
     public function boot()
@@ -115,5 +117,12 @@ class FilterServiceProvider extends ServiceProvider
             'YoungPandas\DataFilter\Contracts\ServiceContract',
             'YoungPandas\DataFilter\Services\FilterService',
         );
+    }
+
+    public function registerFacades()
+    {
+        $this->app->singleton('filter', function ($app) {
+            return new FilterService($app->make('YoungPandas\DataFilter\Contracts\DataFilterContract'));
+        });
     }
 }
