@@ -103,7 +103,7 @@ class FilterServiceProvider extends ServiceProvider
             'use YoungPandas\DataFilter\Helpers\DataFilter;',
             'use App\Helpers\AppDataFilter;',
         ];
-        $bindComment = '        // Bind DataFilterContract to AppDataFilter and inject the base DataFilter';
+        $bindComment = '// Bind DataFilterContract to AppDataFilter and inject the base DataFilter';
         $bindStatement = '        $this->app->bind(DataFilterContract::class, function ($app) {' . "\n" .
             '            return new AppDataFilter($app->make(DataFilter::class));' . "\n" .
             '        });';
@@ -130,9 +130,8 @@ class FilterServiceProvider extends ServiceProvider
 
             if ($namespaceLineIndex !== -1) {
                 $insertIndex = $namespaceLineIndex + 1;
-                if (isset($lines[$insertIndex]) && trim($lines[$insertIndex]) !== '') {
-                    $insertIndex += 1;
-                }
+                array_splice($lines, $insertIndex, 0, ['']);
+                $insertIndex += 1;
                 array_splice($lines, $insertIndex, 0, $newUseStatements);
             }
 
@@ -141,9 +140,9 @@ class FilterServiceProvider extends ServiceProvider
             $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
                 $existingContent = trim($matches[2]);
                 if ($existingContent === '//') {
-                    return $matches[1] . "\n$bindComment\n$bindStatement\n    }\n";
+                    return $matches[1] . "\n$bindComment\n$bindStatement\n    }";
                 } else {
-                    return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n" . $existingContent . "\n    }\n";
+                    return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n" . $existingContent . "\n    }";
                 }
             }, $content);
 
@@ -156,7 +155,6 @@ class FilterServiceProvider extends ServiceProvider
             Log::error($e->getMessage());
         }
     }
-
 
     public function registerRules()
     {
