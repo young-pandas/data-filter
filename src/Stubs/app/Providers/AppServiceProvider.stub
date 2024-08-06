@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Providers;
+
+use App\Helpers\AppDataFilter;
+use YoungPandas\DataFilter\Contracts\DataFilterContract;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        // Bind DataFilterContract to AppDataFilter
+        $this->app->bind(DataFilterContract::class, AppDataFilter::class);
+    }
+
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        //
+    }
+}

@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Traits;
+
+trait FirstName
+{
+
+    public function filterFirstNameIn(string $firstName)
+    {
+        return $firstName;
+    }
+
+    public function filterFirstNameOut(string $firstName)
+    {
+        return $firstName;
+    }
+}
+
+

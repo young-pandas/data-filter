@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use YoungPandas\DataFilter\Contracts\DataFilterContract;
+use App\Traits\FirstName;
 use YoungPandas\DataFilter\Helpers\DataFilter;
 
 /**
@@ -20,13 +20,8 @@ use YoungPandas\DataFilter\Helpers\DataFilter;
  * 
  * Hope you enjoy using this package. If you have any questions or need help, please feel free to reach out to us at https://youngpandas.com/contact
  */
-class AppDataFilter implements DataFilterContract
+class AppDataFilter extends DataFilter
 {
-    private DataFilterContract $dataFilterContract;
-
-    public function __construct(DataFilter $dataFilter)
-    {
-        $this->dataFilterContract = $dataFilter;
-    }
+    use FirstName;
     // Add your custom traits or methods for filtering data here
 }
