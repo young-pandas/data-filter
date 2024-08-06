@@ -140,9 +140,9 @@ class FilterServiceProvider extends ServiceProvider
             $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
                 $existingContent = trim($matches[2]);
                 if ($existingContent === '//') {
-                    return $matches[1] . "    $bindComment\n    $bindStatement\n    }";
+                    return $matches[1] . "$bindComment\n    $bindStatement\n    }";
                 } else {
-                    return $matches[1] . "\n    " . $existingContent . "\n\n    $bindComment\n    $bindStatement\n    }";
+                    return $matches[1] . "\n    " . trim($existingContent) . "\n\n    $bindComment\n    $bindStatement\n}";
                 }
             }, $content);
 
