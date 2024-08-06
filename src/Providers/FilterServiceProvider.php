@@ -116,7 +116,7 @@ class FilterServiceProvider extends ServiceProvider
             }
 
             // Ensure one line space after namespace
-            $content = preg_replace('/(namespace\s+App\\\Providers;\s*)(use\s+|class\s+)/', "$1\n$2", $content);
+            $content = preg_replace('/(namespace\s+App\\\Providers;\s*)(\n\s*\n)+/', "$1\n", $content);
 
             // Add use statements if they do not exist
             foreach ($useStatements as $useStatement) {
@@ -126,9 +126,8 @@ class FilterServiceProvider extends ServiceProvider
                 }
             }
 
-            // Ensure one line space before and after the newly added use statements
-            $content = preg_replace('/(namespace\s+App\\\Providers;\s+)(use\s+)/', "$1\n$2", $content);
-            $content = preg_replace('/(use\s+[^\n]+;\s+)(class\s+)/', "$1\n$2", $content);
+            // Ensure one line space after the newly added use statements
+            $content = preg_replace('/(use\s+[^\n]+;\s*)(\n\s*\n)+/', "$1\n", $content);
 
             // Update the register method
             $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
