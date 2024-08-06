@@ -43,6 +43,7 @@ class FilterServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole() && $this->isVendorPublishCommand()) {
             $this->appendRoutes();
+            $this->updateAppServiceProvider();
         }
     }
 
@@ -89,6 +90,48 @@ class FilterServiceProvider extends ServiceProvider
                 throw new \Exception("Failed to append content to app routes file: $appRoutes");
             } else {
                 Log::info("Successfully appended routes to app routes file: $appRoutes");
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
+    }
+
+    private function updateAppServiceProvider()
+    {
+        $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
+        $useStatements = [
+            'use App\Helpers\DataFilter;',
+            'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
+        ];
+        $bindStatement = '        $this->app->bind(DataFilterContract::class, DataFilter::class);';
+
+        try {
+            if (!File::exists($appServiceProviderPath)) {
+                throw new \Exception("AppServiceProvider file does not exist: $appServiceProviderPath");
+            }
+
+            $content = File::get($appServiceProviderPath);
+            if ($content === false) {
+                throw new \Exception("Failed to get content from AppServiceProvider file: $appServiceProviderPath");
+            }
+
+            // Add use statements if they do not exist
+            foreach ($useStatements as $useStatement) {
+                if (strpos($content, $useStatement) === false) {
+                    $content = preg_replace('/<\?php\s+/', "<?php\n$useStatement\n", $content, 1);
+                }
+            }
+
+            // Add bind statement if it does not exist
+            if (strpos($content, $bindStatement) === false) {
+                $content = preg_replace('/(public function register\(\)\s*\{)/', "$1\n$bindStatement", $content, 1);
+            }
+
+            $result = File::put($appServiceProviderPath, $content);
+            if ($result === false) {
+                throw new \Exception("Failed to update AppServiceProvider file: $appServiceProviderPath");
+            } else {
+                Log::info("Successfully updated AppServiceProvider file: $appServiceProviderPath");
             }
         } catch (\Exception $e) {
             Log::error($e->getMessage());
