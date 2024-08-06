@@ -99,8 +99,8 @@ class FilterServiceProvider extends ServiceProvider
     {
         $appServiceProviderPath = App::path('Providers/AppServiceProvider.php');
         $useStatements = [
-            'use App\Helpers\DataFilter;',
             'use YoungPandas\DataFilter\Contracts\DataFilterContract;',
+            'use App\Helpers\DataFilter;',
         ];
         $bindStatement = '        $this->app->bind(DataFilterContract::class, DataFilter::class);';
         $bindComment = '        // Bind DataFilterContract to DataFilter';
