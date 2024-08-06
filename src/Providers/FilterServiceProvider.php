@@ -139,15 +139,12 @@ class FilterServiceProvider extends ServiceProvider
             $content = implode("\n", $lines);
             $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
                 $existingContent = trim($matches[2]);
-                if ($existingContent === '//') {
-                    return $matches[1] . "\n$bindComment\n$bindStatement\n    }";
+                if (empty($existingContent)) {
+                    return $matches[1] . "\n    $bindComment\n    $bindStatement\n    }";
                 } else {
-                    return $matches[1] . "\n" . $bindComment . "\n" . $bindStatement . "\n" . $existingContent . "\n    }";
+                    return $matches[1] . "\n    $bindComment\n    $bindStatement\n    " . $existingContent . "\n    }";
                 }
             }, $content);
-
-            // Remove extra space within register function after the opening brace
-            $content = preg_replace('/public function register\(\): void\s*\{\s*\n\s*\n/', 'public function register(): void\n    {', $content);
 
             if (File::put($appServiceProviderPath, $content) === false) {
                 throw new \Exception("Failed to update AppServiceProvider file: $appServiceProviderPath");
