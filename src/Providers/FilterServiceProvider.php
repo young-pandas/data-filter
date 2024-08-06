@@ -22,6 +22,7 @@ class FilterServiceProvider extends ServiceProvider
         );
 
         $this->registerRules();
+        $this->registerHelpers();
         $this->registerServices();
         $this->registerFacades();
     }
@@ -160,6 +161,14 @@ class FilterServiceProvider extends ServiceProvider
         $this->app->bind(
             'YoungPandas\DataFilter\Contracts\RulesContract',
             'YoungPandas\DataFilter\Services\RulesService',
+        );
+    }
+
+    public function registerHelpers()
+    {
+        $this->app->bind(
+            'YoungPandas\DataFilter\Contracts\DataFilterContract',
+            'YoungPandas\DataFilter\Helpers\DataFilter',
         );
     }
 
