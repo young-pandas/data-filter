@@ -115,6 +115,9 @@ class FilterServiceProvider extends ServiceProvider
                 throw new \Exception("Failed to get content from AppServiceProvider file: $appServiceProviderPath");
             }
 
+            // Ensure one line space after namespace
+            $content = preg_replace('/(namespace\s+App\\\Providers;\s*)(use\s+|class\s+)/', "$1\n$2", $content);
+
             // Add use statements if they do not exist
             foreach ($useStatements as $useStatement) {
                 if (strpos($content, $useStatement) === false) {
@@ -123,14 +126,19 @@ class FilterServiceProvider extends ServiceProvider
                 }
             }
 
-            // Ensure one line space after namespace and use statements
+            // Ensure one line space before and after the newly added use statements
             $content = preg_replace('/(namespace\s+App\\\Providers;\s+)(use\s+)/', "$1\n$2", $content);
             $content = preg_replace('/(use\s+[^\n]+;\s+)(class\s+)/', "$1\n$2", $content);
 
-            // Add bind statement if it does not exist
-            if (strpos($content, $bindStatement) === false) {
-                $content = preg_replace('/(public function register\(\): void\s*\{)/', "$1\n$bindComment\n$bindStatement\n", $content, 1);
-            }
+            // Update the register method
+            $content = preg_replace_callback('/(public function register\(\): void\s*\{\s*)([^}]*)\}/', function ($matches) use ($bindComment, $bindStatement) {
+                $existingContent = trim($matches[2]);
+                if ($existingContent === '//') {
+                    return $matches[1] . "\n$bindComment\n$bindStatement\n    }\n";
+                } else {
+                    return $matches[1] . "\n$bindComment\n$bindStatement\n\n" . $existingContent . "\n    }\n";
+                }
+            }, $content);
 
             $result = File::put($appServiceProviderPath, $content);
             if ($result === false) {
